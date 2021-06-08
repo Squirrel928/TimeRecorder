@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8)
 
 project(TimeRecorder VERSION 0.1 LANGUAGES CXX)
 
@@ -28,10 +28,10 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
+        "src/main.cpp"
+        "src/mainwindow.cpp"
+        "src/mainwindow.ui"
+        "src/mainwindow.h"
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -62,3 +62,19 @@ set_target_properties(TimeRecorder PROPERTIES
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(TimeRecorder)
 endif()
+
+# my setting
+add_definitions(-DUNICODE -D_UNICODE)
+
+# 添加子项目
+add_subdirectory(Base)
+
+# 添加包含文件
+include_directories(Base/include)
+include_directories(Base/SQLite)
+include_directories(Base/zqlTools)
+include_directories(include)
+include_directories(build/TimeRecorder_autogen/include_Debug)
+
+# 链接子项目
+target_link_libraries(TimeRecorder PRIVATE TimeRecorderBase)
