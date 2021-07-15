@@ -1,11 +1,7 @@
-#include "mainwindow.h"
+﻿#include "TimeRecorderWin32.h"
 
-#include <QApplication>
-
-int main(int argc, char* argv[]) {
-    QApplication a(argc, argv);
-    MainWindow w;
-    a.connect(&a, SIGNAL(lastWindowClosed()), &w, SLOT(Close_WtiteToSql()));
-    w.show();
-    return a.exec();
+int main() {
+    TimeRecorder* timeRecorder = new TimeRecorderWin32(
+        L"C:/Home/GitProject/TimeRecorderNewSol/TimeRecorder/Recorder.db");
+    timeRecorder->exec();
 }
