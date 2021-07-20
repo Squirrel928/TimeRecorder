@@ -4,11 +4,13 @@ TimeRecorder::TimeRecorder(TimeRecorderLog* _log, TimeRecorderSQL* _sql) {
     m_log = _log;
     m_sql = _sql;
 
-    m_log->WriteLog(LOGLEVEL::info, L"start time: " + DateToString(NowTime()));
+    m_log->WriteLog(TimeRecorderLog::LOGLEVEL::info,
+                    L"start time: " + DateToString(NowTime()));
 }
 
 TimeRecorder::~TimeRecorder() {
-    m_log->WriteLog(LOGLEVEL::info, L"end time: " + DateToString(NowTime()));
+    m_log->WriteLog(TimeRecorderLog::LOGLEVEL::info,
+                    L"end time: " + DateToString(NowTime()));
 }
 
 TimeRecorder::TTime TimeRecorder::NowTime() { return time(nullptr); }

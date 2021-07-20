@@ -23,7 +23,6 @@ public:
     using TTime = time_t;
 
     enum class TMODE { none, fore, back };
-    enum class LOGLEVEL { info, error };
 
     struct TType {
         TSize id;

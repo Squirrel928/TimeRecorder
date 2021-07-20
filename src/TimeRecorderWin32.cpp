@@ -97,7 +97,7 @@ void TimeRecorderWin32::Update() {
         m_foreExe = m_foreExe.substr(m_foreExe.find_last_of('\\') + 1);
     } else
         m_log->WriteLog(
-            LOGLEVEL::error,
+            TimeRecorderLog::LOGLEVEL::error,
             L"Failed to get the name of the foreground program: pid = " +
                 std::to_wstring(pid));
     delete[] path;
@@ -134,13 +134,14 @@ void TimeRecorderWin32::GetAllProcess() {
 
     HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
     if (hProcessSnap == INVALID_HANDLE_VALUE) {
-        m_log->WriteLog(LOGLEVEL::error, L"Failed to obtain system snapshot.");
+        m_log->WriteLog(TimeRecorderLog::LOGLEVEL::error,
+                        L"Failed to obtain system snapshot.");
         return;
     }
     PROCESSENTRY32 pe32;
     pe32.dwSize = sizeof(PROCESSENTRY32);
     if (!Process32First(hProcessSnap, &pe32)) {
-        m_log->WriteLog(LOGLEVEL::error,
+        m_log->WriteLog(TimeRecorderLog::LOGLEVEL::error,
                         L"Failed to obtain system process information.");
         CloseHandle(hProcessSnap);
         return;

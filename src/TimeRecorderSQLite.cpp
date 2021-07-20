@@ -5,26 +5,30 @@ constexpr auto BUFFERSIZE = 256;
 TimeRecorderSQLite::TimeRecorderSQLite(TString sqlName, TString logName)
     : m_sqlite(nullptr), TimeRecorderSQL(sqlName, logName) {
     if (SetSQLFile(sqlName))
-        m_log->WriteLog(LOGLEVEL::info,
+        m_log->WriteLog(TimeRecorderLog::LOGLEVEL::info,
                         L"Open the database file successfully.");
     else
-        m_log->WriteLog(LOGLEVEL::error, L"Open the database file fail.");
+        m_log->WriteLog(TimeRecorderLog::LOGLEVEL::error,
+                        L"Open the database file fail.");
 
     if (GetAppData())
-        m_log->WriteLog(LOGLEVEL::info, L"Get applications info success");
+        m_log->WriteLog(TimeRecorderLog::LOGLEVEL::info,
+                        L"Get applications info success");
     else
-        m_log->WriteLog(LOGLEVEL::error, L"Get applications info fail");
+        m_log->WriteLog(TimeRecorderLog::LOGLEVEL::error,
+                        L"Get applications info fail");
 }
 
 TimeRecorderSQLite::~TimeRecorderSQLite() {
     if (m_sqlite != nullptr && sqlite3_close(m_sqlite) != SQLITE_OK)
-        m_log->WriteLog(LOGLEVEL::error, L"Fail to close the database!");
+        m_log->WriteLog(TimeRecorderLog::LOGLEVEL::error,
+                        L"Fail to close the database!");
 }
 
 bool TimeRecorderSQLite::SetSQLFile(TString fileName) {
     sqlite3* temp;
     if (sqlite3_open(UnicodeToUTF8(fileName).c_str(), &temp) != SQLITE_OK) {
-        m_log->WriteLog(LOGLEVEL::error,
+        m_log->WriteLog(TimeRecorderLog::LOGLEVEL::error,
                         L"Failed to open database: " + fileName);
         return false;
     } else {
@@ -38,7 +42,7 @@ bool TimeRecorderSQLite::SetSQLFile(TString fileName) {
 
 bool TimeRecorderSQLite::Sql_exe(const wchar_t* format, ...) {
     if (m_sqlite == nullptr) {
-        m_log->WriteLog(LOGLEVEL::error,
+        m_log->WriteLog(TimeRecorderLog::LOGLEVEL::error,
                         L"Attempt to use an uninitialized database!");
         return false;
     }
@@ -50,13 +54,13 @@ bool TimeRecorderSQLite::Sql_exe(const wchar_t* format, ...) {
     va_end(args);
 
     char* errmsg = NULL;
-    m_log->WriteLog(LOGLEVEL::info,
+    m_log->WriteLog(TimeRecorderLog::LOGLEVEL::info,
                     L"Sql statement executed: " + TString(buffer));
     if (sqlite3_exec(m_sqlite, UnicodeToUTF8(buffer).c_str(), nullptr, nullptr,
                      &errmsg) != SQLITE_OK) {
-        m_log->WriteLog(LOGLEVEL::error, L"Sql statement execution error: " +
-                                             TString(buffer) + L", " +
-                                             UTF8ToUnicode(errmsg));
+        m_log->WriteLog(TimeRecorderLog::LOGLEVEL::error,
+                        L"Sql statement execution error: " + TString(buffer) +
+                            L", " + UTF8ToUnicode(errmsg));
         delete[] errmsg;
         return false;
     }
@@ -67,7 +71,7 @@ bool TimeRecorderSQLite::GetAppData() {
     m_apps.clear();
     if (m_sqlite == NULL) {
         m_log->WriteLog(
-            LOGLEVEL::error,
+            TimeRecorderLog::LOGLEVEL::error,
             L"Failed to get application information from database!");
         return false;
     }
@@ -77,13 +81,13 @@ bool TimeRecorderSQLite::GetAppData() {
     swprintf_s(buffer, 128, L"SELECT %s, %s, %s, %s, %s FROM %s", TABLE_APP_ID,
                TABLE_APP_NAME, TABLE_APP_EXENAME, TABLE_APP_TYPEID,
                TABLE_APP_MODE, TABLE_APP);
-    m_log->WriteLog(LOGLEVEL::info,
+    m_log->WriteLog(TimeRecorderLog::LOGLEVEL::info,
                     TString(L"Read app information from the database: ") +
                         buffer);
     if (sqlite3_exec(m_sqlite, UnicodeToUTF8(buffer).c_str(), SqlCall_GetApp,
                      &m_apps, &errmsg) != SQLITE_OK) {
         m_log->WriteLog(
-            LOGLEVEL::error,
+            TimeRecorderLog::LOGLEVEL::error,
             TString(L"Fail to get application info from the database: ") +
                 UTF8ToUnicode(errmsg));
         delete[] errmsg;
@@ -98,7 +102,7 @@ bool TimeRecorderSQLite::GetAppData() {
         if (sqlite3_exec(m_sqlite, UnicodeToUTF8(buffer).c_str(),
                          SqlCall_GetRecord, (void*)&i.records,
                          &errmsg) != SQLITE_OK) {
-            m_log->WriteLog(LOGLEVEL::error,
+            m_log->WriteLog(TimeRecorderLog::LOGLEVEL::error,
                             TString(L"Fail to get application record "
                                     L"info from the database: ") +
                                 UTF8ToUnicode(errmsg));
@@ -111,12 +115,12 @@ bool TimeRecorderSQLite::GetAppData() {
     m_types.clear();
     swprintf_s(buffer, 128, L"SELECT %s, %s, %s FROM %s", TABLE_TYPE_ID,
                TABLE_TYPE_NAME, TABLE_TYPE_SUPERTYPE, TABLE_TYPE);
-    m_log->WriteLog(LOGLEVEL::info,
+    m_log->WriteLog(TimeRecorderLog::LOGLEVEL::info,
                     TString(L"Read type information from the database: ") +
                         buffer);
     if (sqlite3_exec(m_sqlite, UnicodeToUTF8(buffer).c_str(), SqlCall_GetType,
                      (void*)&m_types, &errmsg) != SQLITE_OK) {
-        m_log->WriteLog(LOGLEVEL::error,
+        m_log->WriteLog(TimeRecorderLog::LOGLEVEL::error,
                         TString(L"Fail to get application type "
                                 L"info from the database: ") +
                             UTF8ToUnicode(errmsg));

@@ -4,10 +4,8 @@
 #include "TimeRecorderLog.h"
 #include "TimeRecorderSQL.h"
 
-constexpr auto FileName_SQL =
-    L"C:/Home/GitProject/TimeRecorderNewSol/TimeRecorder/Recorder.db";
-constexpr auto FileName_Log =
-    L"C:/Home/GitProject/TimeRecorderNewSol/TimeRecorder/testlog";
+constexpr auto FileName_SQL = L"C:/Home/GitProject/TimeRecorder/Recorder.db";
+constexpr auto FileName_Log = L"C:/Home/GitProject/TimeRecorder/testlog";
 
 class TimeRecorder : public TimeRecorderBase {
 protected:
